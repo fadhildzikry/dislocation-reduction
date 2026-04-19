@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orthopaedic Emergencies — GP Quick Reference</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117;
+    --bg2: #161820;
+    --bg3: #1d2030;
+    --bg4: #242740;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #e8eaf0;
+    --text2: #9ba3b8;
+    --text3: #636a84;
+    --accent: #4f8ef7;
+    --accent2: #7eb3ff;
+    --amber: #f5a623;
+    --amber2: #ffc55a;
+    --red: #e8564a;
+    --red2: #ff8078;
+    --green: #3ecf8e;
+    --green2: #6ee7b7;
+    --purple: #9b7fff;
+    --teal: #22d3c8;
+    --glow-blue: rgba(79,142,247,0.12);
+    --glow-amber: rgba(245,166,35,0.10);
+    --glow-red: rgba(232,86,74,0.10);
+    --glow-green: rgba(62,207,142,0.10);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* Noise texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.5;
+  }
+
+  .container {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  header {
+    margin-bottom: 48px;
+    position: relative;
+  }
+
+  .header-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent);
+    background: rgba(79,142,247,0.1);
+    border: 1px solid rgba(79,142,247,0.25);
+    padding: 4px 10px;
+    border-radius: 4px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(28px, 5vw, 44px);
+    font-weight: 400;
+    color: var(--text);
+    line-height: 1.15;
+    margin-bottom: 12px;
+  }
+
+  h1 em {
+    color: var(--accent2);
+    font-style: italic;
+  }
+
+  .subtitle {
+    font-size: 15px;
+    color: var(--text2);
+    max-width: 560px;
+    line-height: 1.7;
+  }
+
+  /* Category filter bar */
+  .filter-bar {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+  }
+
+  .filter-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border2);
+    background: var(--bg3);
+    color: var(--text2);
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.02em;
+  }
+  .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .filter-btn[data-cat="dislocation"].active { background: var(--accent); border-color: var(--accent); }
+  .filter-btn[data-cat="tendon"].active { background: var(--green); border-color: var(--green); color: #0a1a12; }
+  .filter-btn[data-cat="muscle"].active { background: var(--amber); border-color: var(--amber); color: #1a0f00; }
+  .filter-btn[data-cat="emergency"].active { background: var(--red); border-color: var(--red); }
+
+  /* Cards */
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.15s;
+  }
+  .card:hover { border-color: var(--border2); }
+  .card.hidden { display: none; }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 22px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .card-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--text3);
+    min-width: 24px;
+    font-weight: 500;
+  }
+
+  .card-info { flex: 1; }
+
+  .card-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+
+  .card-sub {
+    font-size: 12px;
+    color: var(--text3);
+  }
+
+  .card-badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 20px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .badge-dislocation { background: rgba(79,142,247,0.15); color: var(--accent2); border: 1px solid rgba(79,142,247,0.25); }
+  .badge-tendon { background: rgba(62,207,142,0.12); color: var(--green2); border: 1px solid rgba(62,207,142,0.25); }
+  .badge-muscle { background: rgba(245,166,35,0.12); color: var(--amber2); border: 1px solid rgba(245,166,35,0.25); }
+  .badge-emergency { background: rgba(232,86,74,0.12); color: var(--red2); border: 1px solid rgba(232,86,74,0.25); }
+
+  .chevron {
+    width: 20px;
+    height: 20px;
+    color: var(--text3);
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+  }
+  .card.open .chevron { transform: rotate(180deg); }
+
+  /* Card body */
+  .card-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1);
+  }
+  .card.open .card-body { max-height: 1600px; }
+
+  .card-inner {
+    padding: 0 22px 24px;
+    border-top: 1px solid var(--border);
+  }
+
+  .intro-text {
+    font-size: 14px;
+    color: var(--text2);
+    line-height: 1.75;
+    padding: 16px 0 12px;
+  }
+
+  /* 2-col grid */
+  .grid2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 8px 0 12px;
+  }
+  @media (max-width: 560px) { .grid2 { grid-template-columns: 1fr; } }
+
+  .info-box {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+
+  .info-box-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text3);
+    margin-bottom: 10px;
+  }
+
+  .info-box ul {
+    list-style: none;
+    padding: 0;
+  }
+  .info-box li {
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.6;
+    padding: 3px 0 3px 14px;
+    position: relative;
+  }
+  .info-box li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--text3);
+  }
+
+  /* Highlighted blocks */
+  .block {
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin: 10px 0;
+  }
+
+  .block-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 7px;
+  }
+
+  .block-text {
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  .block-pain {
+    background: var(--glow-amber);
+    border-left: 3px solid var(--amber);
+  }
+  .block-pain .block-label { color: var(--amber); }
+  .block-pain .block-text { color: #d4b578; }
+
+  .block-manoeuvre {
+    background: var(--glow-blue);
+    border-left: 3px solid var(--accent);
+  }
+  .block-manoeuvre .block-label { color: var(--accent2); }
+  .block-manoeuvre .block-text { color: #8eb8f5; }
+
+  .block-warn {
+    background: var(--glow-red);
+    border-left: 3px solid var(--red);
+  }
+  .block-warn .block-label { color: var(--red2); }
+  .block-warn .block-text { color: #d4918a; }
+
+  /* Video links */
+  .video-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .video-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 13px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+
+  .video-btn.yt {
+    background: rgba(232,86,74,0.12);
+    border: 1px solid rgba(232,86,74,0.3);
+    color: var(--red2);
+  }
+  .video-btn.yt:hover {
+    background: rgba(232,86,74,0.22);
+    border-color: var(--red);
+  }
+
+  .video-btn.ref {
+    background: rgba(79,142,247,0.1);
+    border: 1px solid rgba(79,142,247,0.25);
+    color: var(--accent2);
+  }
+  .video-btn.ref:hover {
+    background: rgba(79,142,247,0.18);
+    border-color: var(--accent);
+  }
+
+  .yt-icon {
+    width: 14px;
+    height: 10px;
+    background: currentColor;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 12'%3E%3Cpath d='M15.8 1.9a2 2 0 00-1.4-1.4C13.1 0 8 0 8 0S2.9 0 1.6.5A2 2 0 00.2 1.9C0 3.2 0 6 0 6s0 2.8.2 4.1a2 2 0 001.4 1.4C2.9 12 8 12 8 12s5.1 0 6.4-.5a2 2 0 001.4-1.4C16 8.8 16 6 16 6s0-2.8-.2-4.1zM6.4 8.6V3.4L10.6 6 6.4 8.6z'/%3E%3C/svg%3E") center/contain no-repeat;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 12'%3E%3Cpath d='M15.8 1.9a2 2 0 00-1.4-1.4C13.1 0 8 0 8 0S2.9 0 1.6.5A2 2 0 00.2 1.9C0 3.2 0 6 0 6s0 2.8.2 4.1a2 2 0 001.4 1.4C2.9 12 8 12 8 12s5.1 0 6.4-.5a2 2 0 001.4-1.4C16 8.8 16 6 16 6s0-2.8-.2-4.1zM6.4 8.6V3.4L10.6 6 6.4 8.6z'/%3E%3C/svg%3E") center/contain no-repeat;
+    flex-shrink: 0;
+  }
+
+  /* Two-col info box variant */
+  .info-box.accent-green { border-color: rgba(62,207,142,0.2); }
+  .info-box.accent-blue { border-color: rgba(79,142,247,0.2); }
+
+  /* Stat callout */
+  .stat-row {
+    display: flex;
+    gap: 12px;
+    margin: 8px 0;
+    flex-wrap: wrap;
+  }
+  .stat {
+    background: var(--bg4);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--teal);
+  }
+  .stat span { color: var(--text3); font-size: 10px; display: block; margin-bottom: 2px; letter-spacing: 0.05em; text-transform: uppercase; }
+
+  /* Note bar */
+  .note-bar {
+    background: rgba(155,127,255,0.08);
+    border: 1px solid rgba(155,127,255,0.2);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 12px;
+    color: #c4b4ff;
+    margin-bottom: 28px;
+    line-height: 1.6;
+  }
+
+  /* Divider label */
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin: 28px 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Accent border top per category */
+  .card[data-cat="dislocation"] { border-top: 2px solid rgba(79,142,247,0.35); }
+  .card[data-cat="tendon"] { border-top: 2px solid rgba(62,207,142,0.35); }
+  .card[data-cat="muscle"] { border-top: 2px solid rgba(245,166,35,0.35); }
+  .card[data-cat="emergency"] { border-top: 2px solid rgba(232,86,74,0.5); }
+
+  /* Footer */
+  footer {
+    margin-top: 60px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text3);
+    line-height: 1.8;
+  }
+
+  /* Print styles */
+  @media print {
+    body { background: #fff; color: #111; }
+    .card-body { max-height: none !important; }
+    .card-inner { display: block !important; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="header-tag">🦴 Clinical Quick Reference</div>
+    <h1>Orthopaedic Emergencies<br><em>GPs Need to Know</em></h1>
+    <p class="subtitle">14 under-discussed presentations — evaluation, ER pain management, reduction manoeuvres, and video references. Compiled for general practitioners.</p>
+  </header>
+
+  <div class="note-bar">
+    🔗 Each manoeuvre includes a <strong>YouTube search link</strong> (always live, always current) and a <strong>stable reference link</strong> from Merck Manuals, LITFL, or Medmastery. Direct YouTube video IDs expire — these never do.
+  </div>
+
+  <!-- Filter bar -->
+  <div class="filter-bar">
+    <button class="filter-btn active" data-cat="all" onclick="filterCards('all', this)">All 14</button>
+    <button class="filter-btn" data-cat="dislocation" onclick="filterCards('dislocation', this)">Dislocations</button>
+    <button class="filter-btn" data-cat="tendon" onclick="filterCards('tendon', this)">Tendon ruptures</button>
+    <button class="filter-btn" data-cat="muscle" onclick="filterCards('muscle', this)">Muscle / other</button>
+    <button class="filter-btn" data-cat="emergency" onclick="filterCards('emergency', this)">Surgical emergency</button>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!--  DISLOCATIONS                                   -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="section-label">Dislocations</div>
+
+  <!-- 1. Patella -->
+  <div class="card" data-cat="dislocation" id="card1">
+    <div class="card-header" onclick="toggleCard('card1')">
+      <span class="card-num">01</span>
+      <div class="card-info">
+        <div class="card-title">Patellar dislocation</div>
+        <div class="card-sub">Young women, athletes, hyperlaxity — often recurrent and under-treated</div>
+      </div>
+      <span class="card-badge badge-dislocation">Dislocation</span>
+      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <p class="intro-text">Almost always <strong style="color:var(--text)">lateral</strong>. May reduce spontaneously before arrival — patient presents with haemarthrosis and medial retinaculum tenderness saying "my kneecap popped out." Trochlear dysplasia is the underlying culprit in recurrent cases.</p>
+        <div class="grid2">
+          <div class="info-box">
+            <div class="info-box-title">Evaluation</div>
+            <ul>
+              <li>Visible lateral patellar displacement</li>
+              <li>Medial retinaculum tenderness</li>
+              <li>Positive apprehension sign</li>
+              <li>X-ray: AP + lateral + Merchant view</li>
+              <li>Look for osteochondral fragment in effusion</li>
+            </ul>
+          </div>
+          <div class="info-box">
+            <div class="info-box-title">Management</div>
+            <ul>
+              <li>Ice, immobilise in extension post-reduction</li>
+              <li>Aspirate if tense haemarthrosis</li>
+              <li>Knee immobiliser 2–4 weeks</li>
+              <li>Ortho referral on first episode</li>
+              <li>MRI if haemarthrosis or osteochondral injury</li>
+            </ul>
+          </div>
+        </div>
+        <div class="block block-pain">
+          <div class="block-label">💊 ER Pain Management</div>
+          <div class="block-text">IV morphine 0.05–0.1 mg/kg or intranasal fentanyl. <strong>Intra-articular lidocaine 1% 10–20 mL</strong> (lateral approach, wait 5 min) is highly effective and avoids the need for procedural sedation.</div>
+        </div>
+        <div class="block block-manoeuvre">
+          <div class="block-label">🖐 Reduction Manoeuvre</div>
+          <div class="block-text">Fully extend the knee (relaxes quadriceps), then push the patella medially with your thumbs while the patient actively extends. One smooth, gentle motion — no force needed if the muscle is relaxed.</div>
+          <div class="video-links">
+            <a class="video-btn yt" href="https://www.youtube.com/results?search_query=patellar+dislocation+reduction+emergency+technique" target="_blank"><span class="yt-icon"></span>Search YouTube</a>
+            <a class="video-btn ref" href="https://www.merckmanuals.com/professional/multimedia/video/how-to-reduce-a-lateral-patellar-dislocation" target="_blank">📹 Merck Manuals video</a>
+          </div>
+        </div>
+        <div class="block block-warn">
+          <div class="block-label">⚠ Don't miss</div>
+          <div class="block-text">MPFL tear on first dislocation → MRI. Multiple episodes → ortho for MPFL reconstruction. Osteochondral loose bodies need arthroscopic removal.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Anterior Shoulder -->
+  <div class="card" data-cat="dislocation" id="card2">
+    <div class="card-header" onclick="toggleCard('card2')">
+      <span class="card-num">02</span>
+      <div class="card-info">
+        <div class="card-title">Anterior shoulder dislocation</div>
+        <div class="card-sub">Most common large-joint dislocation — but the Cunningham technique is almost never taught to GPs</div>
+      </div>
+      <span class="card-badge badge-dislocation">Dislocation</span>
+      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <p class="intro-text">95% anterior subcoracoid. Arm held in slight abduction and external rotation. <strong style="color:var(--text)">Always check the axillary nerve</strong> before and after reduction — sensation over the deltoid badge area.</p>
+        <div class="grid2">
+          <div class="info-box">
+            <div class="info-box-title">Evaluation</div>
+            <ul>
+              <li>"Squared off" shoulder contour</li>
+              <li>Anterior fullness, posterior hollow</li>
+              <li>Test axillary nerve: deltoid badge sensation</li>
+              <li>X-ray: AP + Y-view (confirms anterior)</li>
+              <li>Post-reduction X-ray mandatory</li>
+            </ul>
+          </div>
+          <div class="info-box">
+            <div class="info-box-title">Management</div>
+            <ul>
+              <li>Reduce early — narrowing muscle spasm window</li>
+              <li>Sling 2–3 weeks (young: longer)</li>
+              <li>Recheck axillary nerve post-reduction</li>
+              <li>Ortho if >40 yrs, Hill-Sachs, or recurrent</li>
+              <li>MRI if neurovascular deficit or Bankart suspected</li>
+            </ul>
+          </div>
+        </div>
+        <div class="block block-pain">
+          <div class="block-label">💊 ER Pain Management</div>
+          <div class="block-text"><strong>Cunningham technique needs only IV diazepam 2–5 mg + massage — no procedural sedation.</strong> Alternative: intra-articular lidocaine 20 mL 1% (posterior approach, just below posterior acromion) — as effective as procedural sedation with lower risk. IV ketamine 0.2–0.3 mg/kg only if other methods unavailable.</div>
+        </div>
+        <div class="block block-manoeuvre">
+          <div class="block-label">🖐 Cunningham Technique (no sedation needed)</div>
+          <div class="block-text">Patient seated, arm hanging at side. Massage biceps, deltoid, and trapezius for 2–5 min until muscles visibly relax. Ask patient to slowly flex the elbow to 90°. Reduction occurs spontaneously. No traction, no force, no drama.</div>
+          <div class="video-links">
+            <a class="video-btn yt" href="https://www.youtube.com/results?search_query=Cunningham+technique+anterior+shoulder+dislocation+reduction+no+sedation" target="_blank"><span class="yt-icon"></span>Search YouTube</a>
+            <a class="video-btn ref" href="https://litfl.com/cunningham-shoulder-technique/" target="_blank">📹 LITFL — Cunningham</a>
+            <a class="video-btn ref" href="https://www.medmastery.com/magazine/reducing-shoulder-dislocation-cunningham-technique" target="_blank">📹 Medmastery</a>
+          </div>
+        </div>
+        <div class="block block-warn">
+          <div class="block-label">⚠ Don't miss</div>
+          <div class="block-text">Axillary nerve injury, greater tuberosity fracture (post-reduction X-ray), rotator cuff tear in >40 yrs (MRI if persistent weakness). First dislocation in young patient → high recurrence risk — discuss Bankart lesion with ortho.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Posterior Shoulder -->
+  <div class="card" data-cat="dislocation" id="card3">
+    <div class="card-header" onclick="toggleCard('card3')">
+      <span class="card-num">03</span>
+      <div class="card-info">
+        <div class="card-title">Posterior shoulder dislocation</div>
+        <div class="card-sub">Missed in up to 79% of cases — the "light bulb sign" most ER doctors forget</div>
+      </div>
+      <span class="card-badge badge-dislocation">Dislocation</span>
+      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <p class="intro-text">Classic triad: <strong style="color:var(--text)">seizure / electrocution / high-energy trauma</strong>. The AP X-ray looks almost normal — the diagnostic mistake that gets made repeatedly. Arm locked in internal rotation is the key physical finding.</p>
+        <div class="stat-row">
+          <div class="stat"><span>Miss rate</span>~79% missed at first presentation</div>
+          <div class="stat"><span>Mechanism</span>Seizure · Electrocution · High-energy</div>
+        </div>
+        <div class="grid2">
+          <div class="info-box">
+            <div class="info-box-title">Evaluation</div>
+            <ul>
+              <li>Arm locked in internal rotation — cannot externally rotate</li>
+              <li>"Light bulb sign" on AP X-ray</li>
+              <li>Axillary view or Y-view confirms posterior</li>
+              <li>Always get axillary view after seizure or ECT</li>
+              <li>CT post-reduction to assess bone loss</li>
+            </ul>
+          </div>
+          <div class="info-box">
+            <div class="info-box-title">Management</div>
+            <ul>
+              <li>Procedural sedation required (more force needed)</li>
+              <li>Immobilise in external rotation post-reduction</li>
+              <li>Ortho referral mandatory — reverse Hill-Sachs common</li>
+              <li>High recurrence — surgical planning often needed</li>
+            </ul>
+          </div>
+        </div>
+        <div class="block block-pain">
+          <div class="block-label">💊 ER Pain Management</div>
+          <div class="block-text">Procedural sedation required: ketamine 1–1.5 mg/kg IV + midazolam 0.03 mg/kg, or propofol 1 mg/kg titrated. Intra-articular block is less practical here given posterior approach difficulty.</div>
+        </div>
+        <div class="block block-manoeuvre">
+          <div class="block-label">🖐 Reduction: Axial traction → lateral pressure → external rotation</div>
+          <div class="block-text">Apply traction in long axis of arm. Apply lateral pressure on humeral head from posteriorly while an assistant provides counter-traction across the chest. Only then gently externally rotate. Never force external rotation without axial traction first.</div>
+          <div class="video-links">
+            <a class="video-btn yt" href="https://www.youtube.com/results?search_query=posterior+shoulder+dislocation+reduction+technique+ER" target="_blank"><span class="yt-icon"></span>Search YouTube</a>
+            <a class="video-btn ref" href="https://litfl.com/posterior-shoulder-dislocation/" target="_blank">📹 LITFL reference</a>
+          </div>
+        </div>
+        <div class="block block-warn">
+          <div class="block-label">⚠ Don't miss</div>
+          <div class="block-text">Seizure patient holding arm in internal rotation = get axillary view, always, no exceptions. Missed posteriors >3 weeks old require surgical reduction — the prognosis worsens dramatically.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. PIP -->
+  <div class="card" data-cat="dislocation" id="card4">
+    <div class="card-header" onclick="toggleCard('card4')">
+      <span class="card-num">04</span>
+      <div class="card-info">
+        <div class="card-title">Finger PIP joint dislocation</div>
+        <div class="card-sub">Dismissed as "jammed finger" — missed volar plate injuries cause permanent stiffness</div>
+      </div>
+      <span class="card-badge badge-dislocation">Dislocation</span>
+      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <p class="intro-text">Dorsal dislocation is most common (ball sports). The volar plate is the critical structure — avulsion leads to joint instability and permanent stiffness if not splinted in the correct position. <strong style="color:var(--text)">Never just buddy tape and discharge.</strong></p>
+        <div class="grid2">
+          <div class="info-box">
+            <div class="info-box-title">Evaluation</div>
+            <ul>
+              <li>PIP joint fixed in hyperextension</li>
+              <li>Lateral X-ray: volar plate avulsion fragment</li>
+              <li>Post-reduction: test full active ROM + lateral stability</li>
+              <li>Check for boutonnière (central slip injury)</li>
+            </ul>
+          </div>
+          <div class="info-box">
+            <div class="info-box-title">Management</div>
+            <ul>
+              <li>Dorsal: reduce → buddy tape in 30° flexion</li>
+              <li>Volar plate avulsion: extension block splint 4–6 weeks</li>
+              <li>Irreducible (volar plate interposition): surgical referral</li>
+              <li>Extension lag post-reduction: hand surgery referral</li>
+            </ul>
+          </div>
+        </div>
+        <div class="block block-pain">
+          <div class="block-label">💊 ER Pain Management</div>
+          <div class="block-text"><strong>Digital nerve block:</strong> lidocaine 1% (no adrenaline), 1–2 mL each side at the base of the finger. Wait 3–5 min. Provides complete analgesia and muscle relaxation — makes reduction effortless.</div>
+        </div>
+        <div class="block block-manoeuvre">
+          <div class="block-label">🖐 Traction → flex (do NOT hyperextend first)</div>
+          <div class="block-text">Apply traction in the long axis of the finger, then gently flex the middle phalanx while maintaining traction. Hyperextending first significantly worsens volar plate damage. One smooth motion is all that's needed after a good digital block.</div>
+          <div class="video-links">
+            <a class="video-btn yt" href="https://www.youtube.com/results?search_query=PIP+finger+dislocation+reduction+digital+nerve+block+emergency" target="_blank"><span class="yt-icon"></span>Search YouTube</a>
+            <a class="video-btn ref" href="https://www.merckmanuals.com/professional/injuries-poisoning/how-to-reduce-dislocations-and-subluxations/how-to-reduce-a-finger-dislocation" target="_blank">📹 Merck Manuals video</a>
+          </div>
+        </div>
+        <div class="block block-warn">
+          <div class="block-label">⚠ Don't miss</div>
+          <div class="block-text">Volar dislocation is rarer but dangerous — involves central slip rupture → boutonnière deformity if missed. Extension lag at PIP after reduction = hand surgery referral same day.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Nursemaid -->
+  <div class="card" data-cat="dislocation" id="card5">
+    <div class="card-header" onclick="toggleCard('card5')">
+      <span class="card-num">05</span>
+      <div class="card-info">
+        <div class="card-title">Nursemaid's elbow</div>
+        <div class="card-sub">Toddler, limp arm, pulled by the wrist — the hyperpronation trick takes 3 seconds</div>
+      </div>
+      <span class="card-badge badge-dislocation">Dislocation</span>
+      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <p class="intro-text">Age 1–4 years, pulled by the hand or wrist. Arm hangs limp in pronation at the side. <strong style="color:var(--text)">Clinical diagnosis</strong> — the X-ray is normal. Hyperpronation technique has 94% first-attempt success vs 69% for the traditional supination-flexion method.</p>
+        <div class="stat-row">
+          <div class="stat"><span>Hyperpronation success</span>~94% first attempt</div>
+          <div class="stat"><span>Supination-flexion success</span>~69% first attempt</div>
+        </div>
+        <div class="grid2">
+          <div class="info-box">
+            <div class="info-box-title">Evaluation</div>
+            <ul>
+              <li>Age 1–4, pulled by the wrist/hand</li>
+              <li>Arm limp at side, pronated, no active supination</li>
+              <li>No swelling, bruising, or bony tenderness</li>
+              <li>X-ray only if concern for fracture</li>
+            </ul>
+          </div>
+          <div class="info-box">
+            <div class="info-box-title">Management</div>
+            <ul>
+              <li>Reduce immediately — no anaesthesia needed</li>
+              <li>Normal arm use within 10–15 min post-reduction</li>
+              <li>X-ray if still not using at 30 min</li>
+              <li>Counsel parents: no pulling by wrist for 6 months</li>
+            </ul>
+          </div>
+        </div>
+        <div class="block block-pain">
+          <div class="block-label">💊 Pain Management</div>
+          <div class="block-text">No analgesia needed. Oral sucrose for distraction in very young children. The reduction itself provides instant relief — child typically stops crying within 30 seconds of a successful reduction and reaches for a toy.</div>
+        </div>
+        <div class="block block-manoeuvre">
+          <div class="block-label">🖐 Hyperpronation (preferred — 3 seconds)</div>
+          <div class="block-text">Support the elbow with one hand, thumb over the radial head. With the other hand firmly and quickly hyperponate the forearm in a single motion. Feel or hear a subtle click over the radial head = reduction.</div>
+          <div class="video-links">
+            <a class="video-btn yt" href="https://www.youtube.com/results?search_query=nursemaid+elbow+radial+head+subluxation+hyperpronation+reduction+toddler" target="_blank"><span class="yt-icon"></span>Search YouTube</a>
+            <a class="video-btn ref" href="https://www.merckmanuals.com/professional/multimedia/video/how-to-reduce-a-radial-head-subluxation-nursemaid-elbow" target="_blank">📹 Merck Manuals video</a>
+          </div>
+        </div>
+        <div class="block block-warn">
+          <div class="block-label">⚠ Don't miss</div>
+          <div class="block-text">3+ recurrent subluxations = annular ligament laxity. Counsel parents to avoid lifting by wrists until age 5–6. Each recurrence makes the next one more likely.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TMJ Dislocation -->
+  <div class="card" data-cat="dislocation" id="cardtmj">
+    <div class="card-header" onclick="toggleCard('cardtmj')">
+      <span class="card-num">06</span>
+      <div class="card-info">
+        <div class="card-title">TMJ dislocation</div>
+        <div class="card-sub">Mouth locked open — the patient who can't close their jaw, often after a big yawn or dental procedure</div>
+      </div>
+      <span class="card-badge badge-dislocation">Dislocation</span>
+      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <p class="intro-text">The condylar head slips <strong style="color:var(--text)">anterior to the articular eminence</strong> and becomes locked there by masseteric and pterygoid muscle spasm. Almost always bilateral. Typically after a wide yawn, dental procedure, prolonged intubation, excessive laughter, or seizure. The longer it sits, the harder it is to reduce — get on it within the hour. Recurrent dislocators often learn to self-reduce.</p>
+        <div class="stat-row">
+          <div class="stat"><span>Direction</span>Anterior (condyle locks in front of eminence)</div>
+          <div class="stat"><span>Laterality</span>Most commonly bilateral</div>
+          <div class="stat"><span>Key risk factor</span>Joint laxity · Prior dislocation · Sedation</div>
+        </div>
+        <div class="grid2">
+          <div class="info-box">
+            <div class="info-box-title">Evaluation</div>
+            <ul>
+              <li>Mouth fixed open — patient cannot close jaw</li>
+              <li>Marked preauricular depression bilaterally (empty glenoid fossa)</li>
+              <li>Anterior protrusion of mandible</li>
+              <li>Drooling, difficulty speaking, distress</li>
+              <li>Bilateral: jaw deviates midline if unilateral</li>
+              <li>X-ray: Towne's view or OPG confirms condyle position</li>
+              <li>CT if trauma, fracture, or failed reduction suspected</li>
+            </ul>
+          </div>
+          <div class="info-box">
+            <div class="info-box-title">Management</div>
+            <ul>
+              <li>Reduce as soon as possible — spasm worsens rapidly</li>
+              <li>Soft diet + jaw restriction 2 weeks post-reduction</li>
+              <li>Barton bandage (chin sling) for 24–48 h to prevent re-dislocation</li>
+              <li>Advise against wide opening for 4–6 weeks</li>
+              <li>Recurrent dislocators: refer maxillofacial / oral surgery</li>
+              <li>Chronic (>weeks): surgical reduction required</li>
+            </ul>
+          </div>
+        </div>
+        <div class="block block-pain">
+          <div class="block-label">💊 ER Pain Management</div>
+          <div class="block-text">Muscle relaxation is the goal — not just analgesia. <strong>Option 1 (preferred):</strong> IV midazolam 1–2 mg slow IV — provides anxiolysis and muscle relaxation, often enough for easy reduction with no sedation. <strong>Option 2:</strong> IV diazepam 5–10 mg. <strong>Option 3 — intra-articular block:</strong> inject 1–2 mL lidocaine 2% into each TMJ (landmark: 1 cm anterior to tragus, just below the zygomatic arch) — blocks the joint and relaxes spasm. <strong>Avoid opioids alone</strong> — they don't relax masticatory muscle spasm. Methocarbamol (muscle relaxant) is an option in some settings.</div>
+        </div>
+        <div class="block block-manoeuvre">
+          <div class="block-label">🖐 Standard technique — Hippocratic / bimanual method</div>
+          <div class="block-text"><strong>Patient seated upright, head supported against the wall or headrest.</strong> Stand in front or slightly to the side. Wrap your thumbs in gauze (the jaw will clamp shut on reduction — protect your thumbs). Place both thumbs on the lower molar teeth bilaterally, fingers cupping the mandible from below. Apply firm, steady <strong>downward pressure</strong> on the molars (pushing the condyle below the eminence), then simultaneously push <strong>posteriorly</strong> to guide the condyle back into the fossa. A click or clunk confirms reduction — the mouth closes. <strong>Do not use force; use steady, sustained pressure and wait for the spasm to release.</strong></div>
+          <div class="video-links">
+            <a class="video-btn yt" href="https://www.youtube.com/results?search_query=TMJ+dislocation+reduction+technique+emergency+jaw+dislocation" target="_blank"><span class="yt-icon"></span>Search YouTube</a>
+            <a class="video-btn ref" href="https://www.merckmanuals.com/professional/injuries-poisoning/how-to-reduce-dislocations-and-subluxations/how-to-reduce-a-mandibular-dislocation" target="_blank">📹 Merck Manuals video</a>
+            <a class="video-btn ref" href="https://litfl.com/temporomandibular-joint-tmj-dislocation/" target="_blank">📹 LITFL reference</a>
+          </div>
+        </div>
+        <div class="block block-manoeuvre" style="margin-top:0">
+          <div class="block-label">🖐 Wrist pivot technique (safer for operator)</div>
+          <div class="block-text">An elegant alternative that protects the clinician's thumbs. Place your fists on the patient's lower molars (knuckles down) instead of thumbs. Apply the same downward + posterior force using your wrists as a fulcrum. The patient's jaw closes around your knuckles rather than trapping your thumbs — particularly useful for agitated or uncooperative patients.</div>
+          <div class="video-links">
+            <a class="video-btn yt" href="https://www.youtube.com/results?search_query=wrist+pivot+technique+TMJ+jaw+dislocation+reduction" target="_blank"><span class="yt-icon"></span>Search YouTube — wrist pivot</a>
+          </div>
+        </div>
+        <div class="block block-warn">
+          <div class="block-label">⚠ Don't miss</div>
+          <div class="block-text"><strong>Protect your thumbs</strong> — on successful reduction the masseter contracts powerfully and the jaw snaps shut with significant force. Gauze wrapping is not optional. <strong>Condylar fracture</strong> must be excluded before reduction if there is a trauma mechanism — a fracture can look identical clinically. Recurrent dislocators (&gt;3 episodes) need maxillofacial referral for eminoplasty or capsular tightening. <strong>Chronic dislocation (&gt;2–3 weeks)</strong> is fibrosed and cannot be reduced in the ED — refer to maxillofacial surgery.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6b. Elbow Dislocation -->
+  <div class="card" data-cat="dislocation" id="card6b">
+    <div class="card-header" onclick="toggleCard('card6b')">
+      <span class="card-num">06</span>
+      <div class="card-info">
+        <div class="card-title">Elbow dislocation</div>
+        <div class="card-sub">Second most common large-joint dislocation — check brachial artery and median nerve before and after</div>
+      </div>
+      <span class="card-badge badge-dislocation">Dislocation</span>
+      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <p class="intro-text">Second most common large-joint dislocation after the shoulder. <strong style="color:var(--text)">90% are posterior or posterolateral</strong> — the olecranon driven behind the humerus after a FOOSH with the elbow partially flexed. Muscle spasm develops rapidly; reduce early. The brachial artery and median nerve are at risk.</p>
+        <div class="stat-row">
+          <div class="stat"><span>Type</span>~90% posterior / posterolateral</div>
+          <div class="stat"><span>Vascular risk</span>Brachial artery ~5–13%</div>
+          <div class="stat"><span>Nerve at risk</span>Median nerve (AIN) · Ulnar nerve</div>
+        </div>
+        <div class="grid2">
+          <div class="info-box">
+            <div class="info-box-title">Evaluation</div>
+            <ul>
+              <li>Elbow held at ~45° flexion, prominent olecranon posteriorly</li>
+              <li>Loss of equilateral triangle (olecranon + both epicondyles)</li>
+              <li>Radial pulse + capillary refill — brachial artery at risk</li>
+              <li>Median nerve: index/middle sensation, OK sign (AIN)</li>
+              <li>Ulnar nerve: little finger sensation, interosseous strength</li>
+              <li>X-ray AP + lateral — rule out fracture-dislocation</li>
+              <li>Terrible triad = dislocation + radial head + coronoid fracture</li>
+            </ul>
+          </div>
+          <div class="info-box">
+            <div class="info-box-title">Management</div>
+            <ul>
+              <li>Reduce promptly — muscle spasm worsens within minutes</li>
+              <li>Above-elbow backslab at 90° flexion post-reduction</li>
+              <li>Post-reduction X-ray mandatory (confirm concentric reduction)</li>
+              <li>Repeat full neurovascular exam after reduction</li>
+              <li>Absent radial pulse post-reduction: vascular surgery stat</li>
+              <li>Ortho referral all cases — assess instability and fractures</li>
+              <li>Terrible triad: surgical fixation required</li>
+            </ul>
+          </div>
+        </div>
+        <div class="block block-pain">
+          <div class="block-label">💊 ER Pain Management</div>
+          <div class="block-text">IV morphine 0.05–0.1 mg/kg + midazolam 0.03 mg/kg for muscle relaxation. <strong>Lateral soft-spot haematoma block</strong> is an excellent alternative: inject 10–15 mL lidocaine 1% into the triangular soft spot between the lateral epicondyle, radial head, and olecranon tip — wait 5–10 min. Provides good analgesia and muscle relaxation without systemic sedation.</div>
+        </div>
+        <div class="block block-manoeuvre">
+          <div class="block-label">🖐 Reduction — traction-countertraction (two-person)</div>
+          <div class="block-text"><strong>Supine method:</strong> assistant applies countertraction across the anterior arm. Operator grasps the wrist and applies steady axial traction distally, then uses the other hand to apply downward pressure on the proximal forearm while gently flexing the elbow. A clunk confirms reduction. <strong>Prone hanging method (single operator):</strong> patient prone, arm dangling off the bed with a 2–4 kg weight at the wrist — gravity and muscle fatigue reduce the joint within minutes. Elegant and low-force.</div>
+          <div class="video-links">
+            <a class="video-btn yt" href="https://www.youtube.com/results?search_query=elbow+dislocation+reduction+technique+emergency+posterior" target="_blank"><span class="yt-icon"></span>Search YouTube</a>
+            <a class="video-btn ref" href="https://www.merckmanuals.com/professional/injuries-poisoning/how-to-reduce-dislocations-and-subluxations/how-to-reduce-an-elbow-dislocation" target="_blank">📹 Merck Manuals video</a>
+            <a class="video-btn ref" href="https://litfl.com/elbow-dislocation/" target="_blank">📹 LITFL reference</a>
+          </div>
+        </div>
+        <div class="block block-warn">
+          <div class="block-label">⚠ Don't miss</div>
+          <div class="block-text"><strong>Terrible triad</strong> (dislocation + radial head fracture + coronoid fracture) — looks like a simple dislocation on plain X-ray, requires surgical fixation, disastrous outcome if missed. Absent radial pulse post-reduction = vascular surgery emergency. Median nerve AIN injury: patient cannot form an "OK" sign — flexion of thumb IP and index DIP joints is lost.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7b. Hip Dislocation -->
+  <div class="card" data-cat="dislocation" id="card7b">
+    <div class="card-header" onclick="toggleCard('card7b')">
+      <span class="card-num">07</span>
+      <div class="card-info">
+        <div class="card-title">Hip dislocation — posterior &amp; anterior</div>
+        <div class="card-sub">AVN of the femoral head begins at 6 hours — reduce within the hour, imaging first</div>
+      </div>
+      <span class="card-badge badge-dislocation">Dislocation</span>
+      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <p class="intro-text">High-energy trauma — the classic is a dashboard injury (knee strikes dash → posterior dislocation). <strong style="color:var(--text)">90% are posterior.</strong> Anterior dislocations occur with forced abduction and external rotation. Both are vascular emergencies: the lateral epiphyseal vessels are compromised at the time of dislocation, and avascular necrosis (AVN) risk climbs steeply after 6 hours. The sciatic nerve (especially the peroneal division) is at immediate risk in posterior dislocations.</p>
+        <div class="stat-row">
+          <div class="stat"><span>Type split</span>~90% posterior · ~10% anterior</div>
+          <div class="stat"><span>AVN risk window</span>Rises sharply after 6 hours</div>
+          <div class="stat"><span>Nerve at risk (post.)</span>Sciatic — peroneal division</div>
+          <div class="stat"><span>Vessel at risk (ant.)</span>Femoral artery / vein</div>
+        </div>
+        <div class="grid2">
+          <div class="info-box" style="border-color: rgba(79,142,247,0.25)">
+            <div class="info-box-title" style="color:var(--accent2)">Posterior (90%) — classic posture</div>
+            <ul>
+              <li>Hip: <strong style="color:var(--text)">flexed · adducted · internally rotated</strong></li>
+              <li>Leg appears shortened</li>
+              <li>Mechanism: axial load on flexed hip (dashboard)</li>
+              <li>Sciatic nerve: check foot dorsiflexion (EHL), dorsal foot sensation</li>
+              <li>Associated posterior wall acetabular fracture common</li>
+            </ul>
+          </div>
+          <div class="info-box" style="border-color: rgba(62,207,142,0.25)">
+            <div class="info-box-title" style="color:var(--green2)">Anterior (10%) — classic posture</div>
+            <ul>
+              <li>Hip: <strong style="color:var(--text)">extended · abducted · externally rotated</strong></li>
+              <li>Leg may appear lengthened</li>
+              <li>Mechanism: forced abduction/ER — motorcycle, sports, obstetric</li>
+              <li>Femoral nerve + femoral artery at risk</li>
+              <li>Obturator type: groin mass, hip in flexion + ER</li>
+            </ul>
+          </div>
+        </div>
+        <div class="info-box" style="margin: 12px 0">
+          <div class="info-box-title">Evaluation — both types</div>
+          <ul>
+            <li>Full trauma assessment first — this is always a high-energy injury</li>
+            <li>Check sciatic nerve (post.): active dorsiflexion, sensation dorsum foot, hallux extension</li>
+            <li>Check femoral nerve/vessels (ant.): quads strength, femoral pulse, cap refill</li>
+            <li>X-ray AP pelvis + lateral hip — confirm direction, look for acetabular/femoral neck fracture</li>
+            <li>CT post-reduction: mandatory — intra-articular fragments, acetabular fracture pattern</li>
+          </ul>
+        </div>
+        <div class="block block-pain">
+          <div class="block-label">💊 ER Pain Management</div>
+          <div class="block-text">IV morphine 0.1 mg/kg titrated immediately. <strong>Procedural sedation is mandatory for reduction</strong> — muscle relaxation is non-negotiable: ketamine 1–1.5 mg/kg IV + midazolam 0.03 mg/kg, or propofol 1–2 mg/kg titrated. Failed closed reduction under sedation = general anaesthesia in theatre. <strong>Fascia iliaca compartment block (FICB)</strong> as an excellent adjunct: 30–40 mL ropivacaine 0.375% or bupivacaine 0.25% — significantly reduces morphine consumption and provides post-reduction analgesia.</div>
+        </div>
+        <div class="block block-manoeuvre">
+          <div class="block-label">🖐 Posterior — Allis technique (preferred)</div>
+          <div class="block-text"><strong>Patient supine, trolley lowered to the floor.</strong> Assistant applies firm downward pressure on both iliac crests to stabilise the pelvis. Operator stands on the trolley above the patient, flexes both the hip and knee to 90°. Apply steady upward traction in line with the femur (lift straight up toward the ceiling), then gently internally rotate and adduct. A satisfying clunk confirms reduction. <strong>Captain Morgan (single operator):</strong> operator places their knee under the patient's popliteal fossa as a fulcrum and lifts — useful when no assistant is available.</div>
+          <div class="video-links">
+            <a class="video-btn yt" href="https://www.youtube.com/results?search_query=posterior+hip+dislocation+Allis+technique+reduction+emergency" target="_blank"><span class="yt-icon"></span>YouTube — Allis technique</a>
+            <a class="video-btn yt" href="https://www.youtube.com/results?search_query=Captain+Morgan+technique+hip+dislocation+reduction+emergency" target="_blank"><span class="yt-icon"></span>YouTube — Captain Morgan</a>
+          </div>
+        </div>
+        <div class="block block-manoeuvre" style="margin-top:0">
+          <div class="block-label">🖐 Anterior — longitudinal traction + internal rotation</div>
+          <div class="block-text"><strong>Patient supine, assistant stabilises the pelvis.</strong> Apply traction in the line of the deformity (leg is abducted + externally rotated), then progressively internally rotate the femur while maintaining traction, then gently adduct. This guides the femoral head back over the anterior acetabular rim into the socket. Anterior dislocations typically require more force — ensure deep sedation. Confirm femoral pulse immediately after reduction.</div>
+          <div class="video-links">
+            <a class="video-btn yt" href="https://www.youtube.com/results?search_query=anterior+hip+dislocation+reduction+technique+emergency" target="_blank"><span class="yt-icon"></span>YouTube — anterior hip</a>
+            <a class="video-btn ref" href="https://litfl.com/hip-dislocation/" target="_blank">📹 LITFL — Hip dislocation</a>
+            <a class="video-btn ref" href="https://www.merckmanuals.com/professional/injuries-poisoning/how-to-reduce-dislocations-and-subluxations/how-to-reduce-a-hip-dislocation" target="_blank">📹 Merck Manuals video</a>
+          </div>
+        </div>
+        <div class="block block-warn">
+          <div class="block-label">⚠ Critical rules — no exceptions</div>
+          <div class="block-text"><strong>Never reduce without imaging first.</strong> A femoral neck fracture can mimic a dislocation clinically — reducing a neck fracture as a dislocation causes catastrophic vascular disruption. <strong>6-hour AVN rule:</strong> aim to reduce within 1 hour of arrival — every hour of delay matters. <strong>Post-reduction CT is mandatory</strong> — intra-articular bony fragments prevent concentric reduction and destroy articular cartilage if missed. Sciatic nerve foot drop post-reduction: usually neurapraxia, 60–70% recover — monitor carefully over 3–6 months.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TENDON SECTION -->
+  <div class="section-label">Tendon ruptures</div>
+
+  <!-- 6. Achilles -->
+  <div class="card" data-cat="tendon" id="card6">
+    <div class="card-header" onclick="toggleCard('card6')">
+      <span class="card-num">06</span>
+      <div class="card-info">
+        <div class="card-title">Achilles tendon rupture</div>
+        <div class="card-sub">Patient can still plantar-flex using toe flexors — the classic missed diagnosis</div>
+      </div>
+      <span class="card-badge badge-tendon">Tendon</span>
+      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <p class="intro-text">30–50 year old male "weekend warrior." Sudden sharp pain described as being kicked from behind. <strong style="color:var(--text)">The critical trap:</strong> the patient can still plantarflex using FHL and FDL, so the rupture is missed and they're sent home weight-bearing.</p>
+        <div class="grid2">
+          <div class="info-box">
+            <div class="info-box-title">Evaluation</div>
+            <ul>
+              <li>Palpable gap 2–6 cm above calcaneal insertion</li>
+              <li>Thompson test: calf squeeze → no plantarflexion = rupture</li>
+              <li>Active plantarflexion may STILL BE PRESENT (FHL/FDL)</li>
+              <li>US first-line (dynamic); MRI if partial tear</li>
+            </ul>
+          </div>
+          <div class="info-box">
+            <div class="info-box-title">Management</div>
+            <ul>
+              <li>Equinus cast or VACOped boot 20–30° plantarflexion</li>
+              <li>Non-weight bearing 2 weeks, then progressive WB</li>
+              <li>Urgent ortho referral — timing matters</li>
+              <li>Young/active → surgical repair preferred</li>
+              <li>Elderly/sedentary → functional bracing acceptable</li>
+            </ul>
+          </div>
+        </div>
+        <div class="block block-pain">
+          <div class="block-label">💊 ER Pain Management</div>
+          <div class="block-text">Paracetamol 1g + ibuprofen 400 mg (if no contraindication). Elevation, ice, crutches. Avoid long-term NSAIDs — they may impair tendon healing. Pain often settles quickly after the acute event, which falsely reassures clinicians.</div>
+        </div>
+        <div class="block block-manoeuvre">
+          <div class="block-label">🖐 Thompson Test — nearly 100% sensitive</div>
+          <div class="block-text">Patient prone, feet hanging off the edge of the bed. Squeeze the calf muscle belly firmly. <strong>Normal:</strong> foot plantarflexes. <strong>Ruptured Achilles:</strong> no movement at all. Simple, reproducible, and almost infallible.</div>
+          <div class="video-links">
+            <a class="video-btn yt" href="https://www.youtube.com/results?search_query=Thompson+test+Achilles+tendon+rupture+clinical+examination" target="_blank"><span class="yt-icon"></span>Search YouTube</a>
+            <a class="video-btn ref" href="https://www.merckmanuals.com/professional/injuries-poisoning/fractures-dislocations-and-sprains/achilles-tendon-rupture" target="_blank">📹 Merck Manuals</a>
+          </div>
+        </div>
+        <div class="block block-warn">
+          <div class="block-label">⚠ Don't miss</div>
+          <div class="block-text">Fluoroquinolone (Cipro) and corticosteroid-associated ruptures — increasing in frequency. Trivial mechanism + recent FQ course or local steroid injection → Thompson test regardless of story.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. Quad vs Patella Tendon -->
+  <div class="card" data-cat="tendon" id="card7">
+    <div class="card-header" onclick="toggleCard('card7')">
+      <span class="card-num">07</span>
+      <div class="card-info">
+        <div class="card-title">Quadriceps vs patellar tendon rupture</div>
+        <div class="card-sub">Patient can't extend the knee — patella position on X-ray tells you which one</div>
+      </div>
+      <span class="card-badge badge-tendon">Tendon</span>
+      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <p class="intro-text">Both present with inability to extend the knee against gravity. The lateral X-ray gives the answer: <strong style="color:var(--accent2)">patella LOW = quadriceps tendon ruptured</strong>. <strong style="color:var(--green2)">Patella HIGH = patellar tendon ruptured</strong>. Surgical window is 2 weeks — don't delay.</p>
+        <div class="grid2">
+          <div class="info-box accent-blue">
+            <div class="info-box-title" style="color:var(--accent2)">Quadriceps rupture — >40 yrs</div>
+            <ul>
+              <li>Palpable gap above patella</li>
+              <li>Patella LOW (patella baja) on lateral X-ray</li>
+              <li>Older adults, steroid use, CKD, renal dialysis</li>
+              <li>May still SLR supine but not against gravity</li>
+            </ul>
+          </div>
+          <div class="info-box accent-green">
+            <div class="info-box-title" style="color:var(--green2)">Patellar tendon rupture — <40 yrs</div>
+            <ul>
+              <li>Palpable gap below patella</li>
+              <li>Patella HIGH (patella alta) on lateral X-ray</li>
+              <li>Younger athletes, prior patellar tendinopathy</li>
+              <li>Often complete inability to extend</li>
+            </ul>
+          </div>
+        </div>
+        <div class="block block-pain">
+          <div class="block-label">💊 ER Pain Management</div>
+          <div class="block-text">IV morphine 0.05–0.1 mg/kg. Knee immobiliser in full extension. Elevate, ice. Do NOT attempt reduction — complete ruptures are a surgical emergency. Immobilise and refer urgently.</div>
+        </div>
+        <div class="block block-manoeuvre">
+          <div class="block-label">🖐 Straight Leg Raise — the key bedside test</div>
+          <div class="block-text">Supine — ask patient to lift the whole leg keeping the knee straight. <strong>Complete inability = complete extensor mechanism rupture.</strong> Partial SLR with lag = partial tear. Confirm with lateral X-ray and US or MRI.</div>
+          <div class="video-links">
+            <a class="video-btn yt" href="https://www.youtube.com/results?search_query=quadriceps+tendon+rupture+patellar+tendon+rupture+diagnosis+comparison" target="_blank"><span class="yt-icon"></span>Search YouTube</a>
+            <a class="video-btn ref" href="https://radiopaedia.org/articles/patellar-tendon-rupture" target="_blank">📹 Radiopaedia reference</a>
+          </div>
+        </div>
+        <div class="block block-warn">
+          <div class="block-label">⚠ Don't miss</div>
+          <div class="block-text">Surgical repair must occur within 2 weeks for best functional outcomes. Missed repairs result in quadriceps atrophy and permanent extension lag. Treat as urgent ortho referral — same day if possible.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. Distal Biceps -->
+  <div class="card" data-cat="tendon" id="card8">
+    <div class="card-header" onclick="toggleCard('card8')">
+      <span class="card-num">08</span>
+      <div class="card-info">
+        <div class="card-title">Distal biceps tendon rupture</div>
+        <div class="card-sub">The "Popeye arm" — the hook test almost no one does in the GP room</div>
+      </div>
+      <span class="card-badge badge-tendon">Tendon</span>
+      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <p class="intro-text">Males 40–60, heavy eccentric load. Audible "pop" at the antecubital fossa, biceps muscle belly retracts proximally into a visible "Popeye" lump. <strong style="color:var(--text)">Loses 40% of supination strength and 30% of flexion strength</strong> if not repaired within 2 weeks.</p>
+        <div class="stat-row">
+          <div class="stat"><span>Supination strength lost</span>~40% if unrepairedl</div>
+          <div class="stat"><span>Hook test specificity</span>~100%</div>
+          <div class="stat"><span>Surgical window</span>&lt; 2 weeks</div>
+        </div>
+        <div class="grid2">
+          <div class="info-box">
+            <div class="info-box-title">Evaluation</div>
+            <ul>
+              <li>Popeye sign: biceps belly retracts proximally</li>
+              <li>Hook test: no cord to hook = complete rupture</li>
+              <li>Weakness of supination > weakness of flexion</li>
+              <li>Delayed ecchymosis at antecubital fossa (24–48 h)</li>
+              <li>US confirms; MRI if partial tear suspected</li>
+            </ul>
+          </div>
+          <div class="info-box">
+            <div class="info-box-title">Management</div>
+            <ul>
+              <li>Complete rupture: urgent ortho within 2 weeks</li>
+              <li>Partial tear: conservative physio trial first</li>
+              <li>Sling in 90° flexion for comfort</li>
+              <li>Elderly/low-demand: accept 30–40% supination loss</li>
+            </ul>
+          </div>
+        </div>
+        <div class="block block-pain">
+          <div class="block-label">💊 ER Pain Management</div>
+          <div class="block-text">Oral NSAIDs + paracetamol sufficient for most. Sling in 90° flexion. Ice. Monitor for antecubital haematoma — can enlarge and compress surrounding structures. No reduction manoeuvre indicated.</div>
+        </div>
+        <div class="block block-manoeuvre">
+          <div class="block-label">🖐 Hook Test — sensitivity 81%, specificity ~100%</div>
+          <div class="block-text">Patient flexes elbow to 90° and supinates. Hook your index finger behind the lateral edge of the biceps tendon from the lateral side. Normally you can hook ~1 cm of tendon cord. <strong>Nothing to hook = complete rupture.</strong></div>
+          <div class="video-links">
+            <a class="video-btn yt" href="https://www.youtube.com/results?search_query=hook+test+distal+biceps+tendon+rupture+clinical+examination" target="_blank"><span class="yt-icon"></span>Search YouTube</a>
+            <a class="video-btn ref" href="https://www.physio-pedia.com/Distal_Bicep_Tendon_Rupture" target="_blank">📹 Physiopedia reference</a>
+          </div>
+        </div>
+        <div class="block block-warn">
+          <div class="block-label">⚠ Don't miss</div>
+          <div class="block-text">Partial tears are the diagnostic trap — persistent pain with full or near-full strength. The hook test may still feel a thinned cord. US is diagnostic. Don't miss the delayed antecubital ecchymosis appearing 24–48 h later.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MUSCLE / OTHER SECTION -->
+  <div class="section-label">Muscle & surgical emergencies</div>
+
+  <!-- 9. Iliopsoas -->
+  <div class="card" data-cat="muscle" id="card9">
+    <div class="card-header" onclick="toggleCard('card9')">
+      <span class="card-num">09</span>
+      <div class="card-info">
+        <div class="card-title">Iliopsoas / hip flexor tear</div>
+        <div class="card-sub">Misdiagnosed as a groin strain — femoral nerve compression turns it surgical</div>
+      </div>
+      <span class="card-badge badge-muscle">Muscle</span>
+      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <p class="intro-text">High-speed kick or sprint. Deep anterior groin and lower abdominal pain. <strong style="color:var(--text)">The serious variant:</strong> a large haematoma compressing the femoral nerve — presents with quadriceps weakness and anterior thigh numbness — this is a surgical emergency.</p>
+        <div class="grid2">
+          <div class="info-box">
+            <div class="info-box-title">Evaluation</div>
+            <ul>
+              <li>Deep groin/lower abdominal pain with resisted hip flexion</li>
+              <li>Palpable mass if haematoma present</li>
+              <li>Femoral nerve signs: quads weakness, anterior thigh numbness</li>
+              <li>MRI gold standard; US limited by depth</li>
+              <li>CT if anticoagulated or haematocrit dropping</li>
+            </ul>
+          </div>
+          <div class="info-box">
+            <div class="info-box-title">Management</div>
+            <ul>
+              <li>Most: conservative — rest, ice, NSAIDs 5–7 days</li>
+              <li>Crutches if weight bearing is painful</li>
+              <li>Femoral nerve signs: urgent CT/MRI + ortho/vascular</li>
+              <li>Lesser trochanter avulsion in young/active: surgical</li>
+            </ul>
+          </div>
+        </div>
+        <div class="block block-pain">
+          <div class="block-label">💊 ER Pain Management</div>
+          <div class="block-text">IV/oral NSAIDs + paracetamol. <strong>Position in hip flexion (pillow under knees)</strong> — this single intervention dramatically reduces pain by offloading the iliopsoas. Ice over lower abdomen/groin. Avoid active hip flexion for 2–3 weeks.</div>
+        </div>
+        <div class="block block-manoeuvre">
+          <div class="block-label">🖐 Resisted Hip Flexion Test</div>
+          <div class="block-text">Patient supine, knee bent. Ask them to lift the thigh against your resistance. Deep groin pain = positive. Also: Thomas test position (passive hip extension with knee extended) stretches the iliopsoas and reproduces pain in complete tears.</div>
+          <div class="video-links">
+            <a class="video-btn yt" href="https://www.youtube.com/results?search_query=iliopsoas+hip+flexor+strain+tear+clinical+assessment+test" target="_blank"><span class="yt-icon"></span>Search YouTube</a>
+            <a class="video-btn ref" href="https://www.physio-pedia.com/Iliopsoas_Strain" target="_blank">📹 Physiopedia reference</a>
+          </div>
+        </div>
+        <div class="block block-warn">
+          <div class="block-label">⚠ Don't miss</div>
+          <div class="block-text">Retroperitoneal haematoma in anticoagulated patients (warfarin/DOAC) mimics this presentation. Dropping haematocrit + groin pain → urgent CT abdomen/pelvis. Femoral nerve palsy = surgical emergency — immediate referral.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10. Compartment Syndrome -->
+  <div class="card" data-cat="emergency" id="card10">
+    <div class="card-header" onclick="toggleCard('card10')">
+      <span class="card-num">10</span>
+      <div class="card-info">
+        <div class="card-title">Acute compartment syndrome</div>
+        <div class="card-sub">6-hour window · Never elevate · The emergency that permanently disables</div>
+      </div>
+      <span class="card-badge badge-emergency">Surgical Emergency</span>
+      <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="card-body">
+      <div class="card-inner">
+        <p class="intro-text">Most common after <strong style="color:var(--text)">tibial shaft fractures, forearm fractures, and crush injuries</strong>. The fasciotomy window is 6 hours — after that, permanent muscle necrosis is inevitable. This is the orthopaedic emergency that kills limbs, not patients. GPs in rural areas must be prepared to recognise and initiate management.</p>
+        <div class="stat-row">
+          <div class="stat"><span>Fasciotomy window</span>6 hours from onset</div>
+          <div class="stat"><span>Pressure threshold</span>&gt;30 mmHg or Δp &lt;30 mmHg</div>
+        </div>
+        <div class="grid2">
+          <div class="info-box" style="border-color: rgba(232,86,74,0.25)">
+            <div class="info-box-title" style="color:var(--red2)">The 6 Ps (in order of onset)</div>
+            <ul>
+              <li><strong style="color:var(--text)">Pain</strong> out of proportion — earliest sign</li>
+              <li><strong style="color:var(--text)">Pressure</strong> — tense, woody compartment on palpation</li>
+              <li><strong style="color:var(--text)">Paresthesia</strong> — tingling in nerve distribution</li>
+              <li><strong style="color:var(--text)">Paralysis</strong> — late, very bad prognosis</li>
+              <li><strong style="color:var(--text)">Pallor</strong> — late sign</li>
+              <li><strong style="color:var(--text)">Pulselessness</strong> — very late, never wait for this</li>
+            </ul>
+          </div>
+          <div class="info-box">
+            <div class="info-box-title">GP/ER Management</div>
+            <ul>
+              <li>Remove ALL circumferential dressings and casts immediately</li>
+              <li><strong style="color:var(--red2)">DO NOT elevate the limb</strong> (reduces perfusion pressure)</li>
+              <li>Keep limb at heart level</li>
+              <li>Measure compartment pressure if available</li>
+              <li>Call ortho NOW — IV access, prepare for theatre</li>
+              <li>Transfer immediately if surgery unavailable</li>
+            </ul>
+          </div>
+        </div>
+        <div class="block block-pain">
+          <div class="block-label">💊 ER Pain Management</div>
+          <div class="block-text"><strong>Do NOT withhold analgesia to "preserve the pain as a sign."</strong> The diagnosis is made clinically and by compartment pressure measurement — not by whether the patient is screaming. IV morphine titrated. Fasciotomy is the only definitive treatment.</div>
+        </div>
+        <div class="block block-manoeuvre">
+          <div class="block-label">🖐 Passive Stretch Test — the earliest clinical sign</div>
+          <div class="block-text">Passively stretch muscles in the suspected compartment. <strong>Anterior leg:</strong> passively plantarflex the foot. <strong>Forearm:</strong> passively extend all fingers. <strong>Severe pain with passive stretch = compartment syndrome until proven otherwise.</strong> This appears before paresthesia and paralysis.</div>
+          <div class="video-links">
+            <a class="video-btn yt" href="https://www.youtube.com/results?search_query=acute+compartment+syndrome+recognition+passive+stretch+test+emergency" target="_blank"><span class="yt-icon"></span>Search YouTube</a>
+            <a class="video-btn ref" href="https://litfl.com/compartment-syndrome/" target="_blank">📹 LITFL — Compartment Syndrome</a>
+          </div>
+        </div>
+        <div class="block block-warn">
+          <div class="block-label">⚠ Absolute rules — no exceptions</div>
+          <div class="block-text"><strong>NEVER elevate.</strong> NEVER apply compression. NEVER cast or splint circumferentially. A tight cast after a tibial fracture that the patient says "feels too tight" is compartment syndrome until proven otherwise. Fasciotomy delayed >6 hours = permanent disability. Transfer immediately if you cannot operate.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <strong style="color:var(--text2)">How to use the video links:</strong> The YouTube buttons open a pre-filled search — results are always current and live. The reference buttons (Merck Manuals, LITFL, Medmastery, Physiopedia, Radiopaedia) are institutionally maintained and stable. Direct YouTube video IDs expire unpredictably; these search links never do.
+    <br><br>
+    <span>This guide is a clinical quick reference for qualified practitioners. Always apply clinical judgment and follow local protocols.</span>
+  </footer>
+
+</div>
+
+<script>
+  function toggleCard(id) {
+    const card = document.getElementById(id);
+    card.classList.toggle('open');
+  }
+
+  function filterCards(cat, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.card').forEach(card => {
+      if (cat === 'all' || card.dataset.cat === cat) {
+        card.classList.remove('hidden');
+      } else {
+        card.classList.add('hidden');
+        card.classList.remove('open');
+      }
+    });
+  }
+</script>
+</body>
+</html>
